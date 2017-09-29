@@ -25,6 +25,7 @@ import {MediaView, MediaEdit} from '../controllers/media/media';
 import {Messenger} from '../plugins/Messenger/messenger';
 
 import {CanDeactivateGuardService} from '../services/can-deactivate-guard';
+import { BoostNewsfeed } from '../controllers/newsfeed/boost-newsfeed';
 
 export const MindsAppRoutes: Routes = [
   { path: '', component: Homepage },
@@ -34,6 +35,7 @@ export const MindsAppRoutes: Routes = [
   { path: 'register', component: Register },
   { path: 'forgot-password', component: ForgotPassword },
 
+  { path: 'newsfeed/boost', component: BoostNewsfeed, canDeactivate: [CanDeactivateGuardService] },
   { path: 'newsfeed/:guid', component: NewsfeedSingle },
   { path: 'newsfeed', component: Newsfeed, canDeactivate: [CanDeactivateGuardService] },
   { path: 'capture', component: Capture },
@@ -77,6 +79,7 @@ export const MINDS_APP_ROUTING_DECLARATIONS: any[] = [
   ForgotPassword,
   NewsfeedSingle,
   Newsfeed,
+  BoostNewsfeed,
   Capture,
   Discovery,
   MediaView,
