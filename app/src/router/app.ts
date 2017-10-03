@@ -25,7 +25,7 @@ import {MediaView, MediaEdit} from '../controllers/media/media';
 import {Messenger} from '../plugins/Messenger/messenger';
 
 import {CanDeactivateGuardService} from '../services/can-deactivate-guard';
-import { BoostNewsfeed } from '../controllers/newsfeed/boost-newsfeed';
+import { BoostNewsfeed } from '../controllers/newsfeed/boost/boost-newsfeed';
 
 export const MindsAppRoutes: Routes = [
   { path: '', component: Homepage },
