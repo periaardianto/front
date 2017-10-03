@@ -3,10 +3,9 @@ import { Subscription } from 'rxjs/Rx';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { Client, Upload } from '../../../services/api';
+import { Client } from '../../../services/api';
 import { MindsTitle } from '../../../services/ux/title';
 import { Navigation as NavigationService } from '../../../services/navigation';
-import { MindsActivityObject } from '../../../interfaces/entities';
 import { SessionFactory } from '../../../services/session';
 import { Poster } from '../../../modules/legacy/controllers/newsfeed/poster/poster';
 
@@ -23,20 +22,15 @@ export class BoostNewsfeed {
   moreData: boolean = true;
   session = SessionFactory.build();
   showRightSidebar: boolean = true;
-  minds;
+  minds = window.Minds;
 
   message: string = '';
 
   paramsSubscription: Subscription;
 
-  pollingTimer: any;
-  pollingOffset: string = '';
-  pollingNewPosts: number = 0;
-
   @ViewChild('poster') private poster: Poster;
 
-  constructor(public client: Client, public upload: Upload, public navigation: NavigationService,
-              public router: Router, public route: ActivatedRoute, public title: MindsTitle) {
+  constructor(public client: Client, public navigation: NavigationService, public router: Router, public route: ActivatedRoute, public title: MindsTitle) {
   }
 
   ngOnInit() {
@@ -44,12 +38,9 @@ export class BoostNewsfeed {
       this.router.navigate(['/login']);
     } else {
       this.load();
-      //this.setUpPoll();
-      this.minds = window.Minds;
     }
 
     this.paramsSubscription = this.route.params.subscribe(params => {
-
       if (params['ts']) {
         this.load(true);
       }
@@ -59,40 +50,7 @@ export class BoostNewsfeed {
     this.detectWidth();
   }
 
-  pollingLoadNew() {
-    if (!this.pollingOffset || !this.pollingNewPosts) {
-      return;
-    }
-
-    if (this.pollingNewPosts > 120) { // just replace the whole newsfeed
-      return this.load(true);
-    }
-
-    this.inProgress = true;
-
-    console.warn('pollingLoadNew');
-    this.client.get('api/v1/boost/fetch/newsfeed', {
-      limit: this.pollingNewPosts,
-      offset: this.pollingOffset,
-      prepend: true
-    }, { cache: true })
-      .then((data: MindsActivityObject) => {
-        this.inProgress = false;
-        this.pollingNewPosts = 0;
-
-        if (!data.activity) {
-          return;
-        }
-
-        this.pollingOffset = data['load-previous'] ? data['load-previous']: '';
-      })
-      .catch(e => {
-        this.inProgress = false;
-      });
-  }
-
   ngOnDestroy() {
-    clearInterval(this.pollingTimer);
     this.paramsSubscription.unsubscribe();
   }
 
@@ -107,13 +65,11 @@ export class BoostNewsfeed {
 
     if (refresh) {
       this.offset = '';
-      this.pollingOffset = '';
-      this.pollingNewPosts = 0;
     }
 
     this.inProgress = true;
 
-    this.client.get('api/v1/boost/fetch/newsfeed', { limit: 1, offset: this.offset }, { cache: true })
+    this.client.get('api/v1/boost/fetch/newsfeed', { limit: 12, offset: this.offset }, { cache: true })
       .then((data: any) => {
         if (!data.boosts) {
           this.moreData = false;
@@ -124,10 +80,6 @@ export class BoostNewsfeed {
           this.newsfeed = this.newsfeed.concat(data.boosts);
         } else {
           this.newsfeed = data.boosts;
-
-          if (data['load-previous']) {
-            this.pollingOffset = data['load-previous'];
-          }
         }
         this.offset = data['load-next'];
         this.inProgress = false;
