@@ -66,6 +66,11 @@ export class NewsfeedBoostRotator {
       }
       this.inProgress = true;
 
+      if(!this.offset || this.offset === '') {
+        this.offset = window.localStorage.getItem('boost-rotator-offset');
+        this.offset = !this.offset ? '' : this.offset;
+      }
+
       this.client.get('api/v1/boost/fetch/newsfeed', { limit: 10, rating: this.rating, offset: this.offset })
         .then((response: any) => {
           if (!response.boosts) {
@@ -83,6 +88,7 @@ export class NewsfeedBoostRotator {
             this.isVisible();
           }
           this.offset = response['load-next'];
+          window.localStorage.setItem('boost-rotator-offset', this.offset);
           this.inProgress = false;
           return resolve(true);
         })
@@ -165,6 +171,7 @@ export class NewsfeedBoostRotator {
       this.client.put('api/v1/boost/fetch/newsfeed/' + this.boosts[position].boosted_guid);
     }
     this.lastTs = Date.now();
+    window.localStorage.setItem('boost-rotator-offset', this.boosts[position].boosted_guid);
   }
 
   active() {
