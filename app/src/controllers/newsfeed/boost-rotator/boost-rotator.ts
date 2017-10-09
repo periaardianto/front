@@ -88,6 +88,7 @@ export class NewsfeedBoostRotator {
             this.isVisible();
           }
           this.offset = response['load-next'];
+          window.localStorage.setItem('boost-rotator-offset', this.offset);
           this.inProgress = false;
           return resolve(true);
         })
