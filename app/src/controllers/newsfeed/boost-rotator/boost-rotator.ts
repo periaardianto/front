@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef } from '@angular/core';
 
 import { ScrollService } from '../../../services/ux/scroll';
 import { Client } from '../../../services/api';
-
+import { Storage } from '../../../services/storage';
 import { SessionFactory } from '../../../services/session';
 import { Router } from '@angular/router';
 
@@ -44,6 +44,7 @@ export class NewsfeedBoostRotator {
     public router: Router,
     public client: Client,
     public scroll: ScrollService,
+    private storage: Storage,
     public element: ElementRef,
     private cd: ChangeDetectorRef
   ) { }
@@ -66,9 +67,8 @@ export class NewsfeedBoostRotator {
       }
       this.inProgress = true;
 
-      if(!this.offset || this.offset === '') {
-        this.offset = window.localStorage.getItem('boost-rotator-offset');
-        this.offset = !this.offset ? '' : this.offset;
+      if(this.storage.get('boost:offset:rotator')) {
+        this.offset = this.storage.get('boost:offset:rotator');
       }
 
       this.client.get('api/v1/boost/fetch/newsfeed', { limit: 10, rating: this.rating, offset: this.offset })
@@ -88,7 +88,7 @@ export class NewsfeedBoostRotator {
             this.isVisible();
           }
           this.offset = response['load-next'];
-          window.localStorage.setItem('boost-rotator-offset', this.offset);
+          this.storage.set('boost:offset:rotator', this.offset);
           this.inProgress = false;
           return resolve(true);
         })
