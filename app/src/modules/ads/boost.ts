@@ -1,4 +1,4 @@
-import { Component, EventEmitter, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { Client } from '../../services/api';
 import { Storage } from '../../services/storage';
 
@@ -33,7 +33,7 @@ export class BoostAds {
   }
 
   fetch() {
-    if (this.storage.get('boost:offset:sidebar')) 
+    if (this.storage.get('boost:offset:sidebar'))
       this.offset = this.storage.get('boost:offset:sidebar');
     this.client.get('api/v1/boost/fetch/' + this.handler, { limit: this.limit, offset: this.offset })
       .then((response: any) => {
@@ -42,7 +42,7 @@ export class BoostAds {
         }
         this.boosts = response.boosts;
 
-        if (response['load-next']) 
+        if (response['load-next'])
           this.storage.set('boost:offset:sidebar', response['load-next']);
       });
   }

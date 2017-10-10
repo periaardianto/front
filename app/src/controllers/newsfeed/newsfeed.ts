@@ -141,9 +141,9 @@ export class Newsfeed {
   }
 
   load(refresh: boolean = false) {
-    if(this.boostFeed){
+    if (this.boostFeed) {
       this.loadBoosts(refresh);
-    } else{
+    } else {
       this.loadNewsfeed(refresh);
     }
   }
