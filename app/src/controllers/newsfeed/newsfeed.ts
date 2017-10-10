@@ -142,10 +142,8 @@ export class Newsfeed {
 
   load(refresh: boolean = false) {
     if(this.boostFeed){
-      console.warn('loading boost feed');
       this.loadBoosts(refresh);
     } else{
-      console.warn('loading normal feed');
       this.loadNewsfeed(refresh);
     }
   }
