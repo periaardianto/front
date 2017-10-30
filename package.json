@@ -4,7 +4,7 @@
   "description": "Front end repository for Minds",
   "engines": {
     "node": "6.11.4"
-  }
+  },
   "scripts": {
     "gulp": "gulp",
     "postinstall": "typings install",
